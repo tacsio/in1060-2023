@@ -10,7 +10,7 @@ class EnrollmentController(private val enrollmentService: EnrollmentService) {
 
     @GetMapping("/")
     fun get(): ResponseEntity<*> {
-        return ResponseEntity.ok("Hello")
+        return ResponseEntity.ok("https://github.com/tacsio/in1060-2023/tree/main/exercise-01/api")
     }
 
 

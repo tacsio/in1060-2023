@@ -10,7 +10,7 @@ import java.util.*
 @Service
 class EnrollmentService(private val enrollmentRepository: EnrollmentRepository) {
 
-    fun getSubjects(student: Student) {
+    fun getSubjects(student: Student): List<Subject> {
         return enrollmentRepository.getSubjects(student)
     }
 
@@ -19,7 +19,7 @@ class EnrollmentService(private val enrollmentRepository: EnrollmentRepository) 
         return enrollmentRepository.saveEnrollment(enrollment)
     }
 
-    suspend fun getSuggestions(student: Student) {
+    suspend fun getSuggestions(student: Student): List<Subject> {
         return expenseAlgorithm(student)
     }
 
@@ -27,7 +27,7 @@ class EnrollmentService(private val enrollmentRepository: EnrollmentRepository) 
         return enrollmentRepository.findStudent(id)
     }
 
-    private suspend fun expenseAlgorithm(student: Student) {
+    private suspend fun expenseAlgorithm(student: Student): List<Subject> {
         val minLimit = 100L
         val maxLimit = student.name.length * 100 * 5L
         val random = (minLimit..maxLimit).random()
