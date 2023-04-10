@@ -4,7 +4,9 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import org.slf4j.LoggerFactory
 
-class Monitor(private val analyzerChannel: Channel<Int>) {
+class Monitor(private val knowledge: Knowledge,
+              private val analyzerInChannel: Channel<Int>) {
+
     private val log = LoggerFactory.getLogger(Monitor::class.java)
 
     suspend fun start() {
@@ -12,7 +14,10 @@ class Monitor(private val analyzerChannel: Channel<Int>) {
             log.info("monitoring")
             delay(1000)
 
-            analyzerChannel.send(1)
+            log.info(knowledge.data)
+            knowledge.data = "change in monitor"
+
+            analyzerInChannel.send(1)
         }
     }
 }

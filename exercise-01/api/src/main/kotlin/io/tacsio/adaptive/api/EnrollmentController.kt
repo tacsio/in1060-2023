@@ -1,4 +1,4 @@
-package io.tacsio.adaptive.api.controller
+package io.tacsio.adaptive.api
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
