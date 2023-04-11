@@ -1,0 +1,204 @@
+_type: export
+__export_format: 4
+__export_date: 2023-04-11T12:16:40.038Z
+__export_source: insomnia.desktop.app:v2022.7.3
+resources:
+  - _id: req_ad3085f13ada49fb9b4fbc1539d2565a
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681210875261
+    created: 1681208603911
+    url: http://localhost:8080/students
+    name: students
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1680367279024.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    parentId: wrk_4842af604af642b789026be68721e935
+    modified: 1681208574925
+    created: 1681208574925
+    name: exercicio01
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1681208574925
+    _type: request_group
+  - _id: wrk_4842af604af642b789026be68721e935
+    parentId: null
+    modified: 1681208567325
+    created: 1681208567325
+    name: IN1060
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_9809b6613893441f92c6ef45add8da30
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681209392299
+    created: 1681209387554
+    url: http://localhost:8080/subjects
+    name: courses
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1680367278999.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_4ad88b77cd2843468e97e72a6fa14858
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681209697971
+    created: 1681209695129
+    url: http://localhost:8080/enrollments
+    name: enrollments
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1680367278986.75
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_9f42ce195805410ab5b3fde663d00836
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681215049881
+    created: 1681208575906
+    url: http://localhost:8080/suggestion/1
+    name: suggestions-student
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1679105333625.125
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_a55cc653993a4f519adffd18f7e8364c
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681212332788
+    created: 1681211279456
+    url: http://localhost:8080/config/suggestion
+    name: switch-config
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1679105333575.125
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_df04dcd1c5084a6fb4446f8b4c416df7
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681213747199
+    created: 1681213576756
+    url: http://localhost:8080/enroll
+    name: enroll
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"studentId": 1,
+        	"subjectIds": [1,2,3]	
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1678474360975.5625
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_70252995fd224d42baa7e0cb7a2510c9
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681215030538
+    created: 1681214685040
+    url: http://localhost:8080/students/1
+    name: enrollments-student
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1678474360925.5625
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_5a811d0d07dbff9c9e50aeecb2f3d556ffe9a13f
+    parentId: wrk_4842af604af642b789026be68721e935
+    modified: 1681208567329
+    created: 1681208567329
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1681208567329
+    _type: environment
+  - _id: jar_5a811d0d07dbff9c9e50aeecb2f3d556ffe9a13f
+    parentId: wrk_4842af604af642b789026be68721e935
+    modified: 1681208567331
+    created: 1681208567331
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: spc_504630808ca944059301d845477fa776
+    parentId: wrk_4842af604af642b789026be68721e935
+    modified: 1681208567326
+    created: 1681208567326
+    fileName: IN1060
+    contents: ""
+    contentType: yaml
+    _type: api_spec
