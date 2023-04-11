@@ -1,6 +1,6 @@
 package io.tacsio.adaptive.api
 
-import io.tacsio.adaptive.api.config.ApiConfig
+import io.tacsio.adaptive.api.config.FeatureFlag
 import io.tacsio.adaptive.api.dto.AvailableSubjectResponse
 import io.tacsio.adaptive.api.model.Enrollment
 import io.tacsio.adaptive.api.model.Student
@@ -13,8 +13,8 @@ import java.util.*
 
 @Service
 class EnrollmentService(
-        private val enrollmentRepository: EnrollmentRepository,
-        private val apiConfig: ApiConfig,
+    private val enrollmentRepository: EnrollmentRepository,
+    private val featureFlag: FeatureFlag
 ) {
 
     private val log = LoggerFactory.getLogger(EnrollmentService::class.java)
@@ -35,12 +35,12 @@ class EnrollmentService(
     }
 
     fun availableSubjects(student: Student): AvailableSubjectResponse {
-        log.debug("Suggestion enabled: ${apiConfig.suggestionAlgorithmEnabled}")
+        log.debug("Suggestion enabled: ${featureFlag.suggestionAlgorithmEnabled}")
 
         val availableSubjects = enrollmentRepository.subjectsNotEnrolled(student)
         var suggestion: List<Subject>? = null
 
-        if (apiConfig.suggestionAlgorithmEnabled) {
+        if (featureFlag.suggestionAlgorithmEnabled) {
             suggestion = expenseAlgorithm(student)
         }
 

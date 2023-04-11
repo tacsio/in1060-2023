@@ -1,21 +1,21 @@
 _type: export
 __export_format: 4
-__export_date: 2023-04-11T12:16:40.038Z
-__export_source: insomnia.desktop.app:v2022.7.3
+__export_date: 2023-04-11T20:53:02.876Z
+__export_source: insomnia.desktop.app:v2021.7.2
 resources:
-  - _id: req_ad3085f13ada49fb9b4fbc1539d2565a
-    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
-    modified: 1681210875261
-    created: 1681208603911
-    url: http://localhost:8080/students
-    name: students
+  - _id: req_01b24882d9e341f181c0edcae4c77494
+    parentId: fld_5aa9ea95216248848b3d90a9a439bb07
+    modified: 1681244506656
+    created: 1681244359093
+    url: http://localhost:8080/actuator/metrics/http.server.requests
+    name: actuator-global
     description: ""
     method: GET
     body: {}
     parameters: []
     headers: []
     authentication: {}
-    metaSortKey: -1680367279024.25
+    metaSortKey: -1681244359093
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true
@@ -24,6 +24,16 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
+  - _id: fld_5aa9ea95216248848b3d90a9a439bb07
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681244353253
+    created: 1681244353253
+    name: sensor
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1681244353253
+    _type: request_group
   - _id: fld_eebe2b6a986a4a768b82cbbb08c7018e
     parentId: wrk_4842af604af642b789026be68721e935
     modified: 1681208574925
@@ -42,6 +52,121 @@ resources:
     description: ""
     scope: collection
     _type: workspace
+  - _id: req_5f84d4c42afd465cb3b5b3525c551e9f
+    parentId: fld_5aa9ea95216248848b3d90a9a439bb07
+    modified: 1681244516335
+    created: 1681244514676
+    url: http://localhost:8080/actuator/metrics/http.server.requests?tag=uri:/suggestion/%7BstudentId%7D
+    name: actuator-suggestions
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1681025082724.0625
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_a1a28bd53ec54b069c6adc770854097c
+    parentId: fld_5aa9ea95216248848b3d90a9a439bb07
+    modified: 1681244700675
+    created: 1681244641462
+    url: http://localhost:8080/sensors/jvm
+    name: jvm
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1681025082674.0625
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_9cbb175ce18344dea36b0dddf979dbf7
+    parentId: fld_228fdb529b9142568876fdc3d194eeec
+    modified: 1681244669938
+    created: 1681243569526
+    url: http://localhost:8080/effectors/suggestion/on
+    name: enable-algorithm
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1680805806355.125
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_228fdb529b9142568876fdc3d194eeec
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681244333586
+    created: 1681244333586
+    name: effector
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1681244333586
+    _type: request_group
+  - _id: req_a55cc653993a4f519adffd18f7e8364c
+    parentId: fld_228fdb529b9142568876fdc3d194eeec
+    modified: 1681244672570
+    created: 1681211279456
+    url: http://localhost:8080/effectors/suggestion/off
+    name: disable-algorithm
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1680805806305.125
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_ad3085f13ada49fb9b4fbc1539d2565a
+    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
+    modified: 1681243956438
+    created: 1681208603911
+    url: http://localhost:8080/students
+    name: students
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1680367279024.25
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
   - _id: req_9809b6613893441f92c6ef45add8da30
     parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
     modified: 1681209392299
@@ -86,7 +211,7 @@ resources:
     _type: request
   - _id: req_9f42ce195805410ab5b3fde663d00836
     parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
-    modified: 1681215049881
+    modified: 1681243979793
     created: 1681208575906
     url: http://localhost:8080/suggestion/1
     name: suggestions-student
@@ -105,30 +230,9 @@ resources:
     settingRebuildPath: true
     settingFollowRedirects: global
     _type: request
-  - _id: req_a55cc653993a4f519adffd18f7e8364c
-    parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
-    modified: 1681212332788
-    created: 1681211279456
-    url: http://localhost:8080/config/suggestion
-    name: switch-config
-    description: ""
-    method: POST
-    body: {}
-    parameters: []
-    headers: []
-    authentication: {}
-    metaSortKey: -1679105333575.125
-    isPrivate: false
-    settingStoreCookies: true
-    settingSendCookies: true
-    settingDisableRenderRequestBody: false
-    settingEncodeUrl: true
-    settingRebuildPath: true
-    settingFollowRedirects: global
-    _type: request
   - _id: req_df04dcd1c5084a6fb4446f8b4c416df7
     parentId: fld_eebe2b6a986a4a768b82cbbb08c7018e
-    modified: 1681213747199
+    modified: 1681243981025
     created: 1681213576756
     url: http://localhost:8080/enroll
     name: enroll
@@ -145,6 +249,7 @@ resources:
     headers:
       - name: Content-Type
         value: application/json
+        id: pair_36bd4eff981a4a17953082d3594e4861
     authentication: {}
     metaSortKey: -1678474360975.5625
     isPrivate: false
