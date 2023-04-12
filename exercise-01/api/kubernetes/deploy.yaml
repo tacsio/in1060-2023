@@ -22,7 +22,7 @@ spec:
               value: "-XX:MaxRAMPercentage=75"
           resources:
             limits:
-              memory: "500Mi"
+              memory: "256Mi"
               cpu: "1"
           ports:
             - containerPort: 8080

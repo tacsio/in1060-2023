@@ -16,43 +16,32 @@ class Planner(
 
     suspend fun start() {
         while (true) {
-            log.debug("Running planner")
-
             val applicationSymptoms = plannerInChannel.receive()
-            log.debug("symptoms: {}", applicationSymptoms)
+            knowledge.analyzeSymptonsFrequency(applicationSymptoms)
 
             val adaptationPlan = planAdaptation(applicationSymptoms)
+            log.debug("Adaptation Plan: {}", adaptationPlan)
+
             executorInChannel.send(adaptationPlan)
         }
     }
 
-
     private fun planAdaptation(symptoms: Set<ApplicationSymptoms>): Set<AdaptationAction> {
         return symptoms.stream()
-            .map {
-                when (it) {
-                    ApplicationSymptoms.HIGH_RESPONSE_TIME -> {
-                        if (!knowledge.latestAdaptationActions.contains(AdaptationAction.DISABLE_SUGGESTION_FEATURE) ||
-                            knowledge.latestAdaptationActions.contains(AdaptationAction.NONE)
-                        ) {
-                            AdaptationAction.DISABLE_SUGGESTION_FEATURE
-                        } else {
-                            AdaptationAction.NONE
-                        }
-                    }
+            .filter { knowledge.canAdapt(it) }
+            .map(::adaptationAction)
+            .collect(Collectors.toSet())
+    }
 
-                    ApplicationSymptoms.LOW_RESPONSE_TIME -> {
-                        if (!knowledge.latestAdaptationActions.contains(AdaptationAction.ENABLE_SUGGESTION_FEATURE) ||
-                            knowledge.latestAdaptationActions.contains(AdaptationAction.NONE)
-                        ) {
-                            AdaptationAction.ENABLE_SUGGESTION_FEATURE
-                        } else {
-                            AdaptationAction.NONE
-                        }
-                    }
+    private fun adaptationAction(it: ApplicationSymptoms?) = when (it) {
+        ApplicationSymptoms.HIGH_RESPONSE_TIME -> {
+            AdaptationAction.DISABLE_SUGGESTION_FEATURE
+        }
 
-                    else -> AdaptationAction.NONE
-                }
-            }.collect(Collectors.toSet())
+        ApplicationSymptoms.LOW_RESPONSE_TIME -> {
+            AdaptationAction.ENABLE_SUGGESTION_FEATURE
+        }
+
+        else -> AdaptationAction.NONE
     }
 }

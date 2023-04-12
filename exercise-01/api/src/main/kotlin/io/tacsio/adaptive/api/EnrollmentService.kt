@@ -35,8 +35,6 @@ class EnrollmentService(
     }
 
     fun availableSubjects(student: Student): AvailableSubjectResponse {
-        log.debug("Suggestion enabled: ${featureFlag.suggestionAlgorithmEnabled}")
-
         val availableSubjects = enrollmentRepository.subjectsNotEnrolled(student)
         var suggestion: List<Subject>? = null
 
@@ -49,7 +47,7 @@ class EnrollmentService(
 
     private fun expenseAlgorithm(student: Student): List<Subject> {
         val minLimit = 30L
-        val maxLimit = student.name.length * 11L
+        val maxLimit = student.name.length * 50L
         val random = (minLimit..maxLimit).random()
 
         runBlocking { delay(random) }

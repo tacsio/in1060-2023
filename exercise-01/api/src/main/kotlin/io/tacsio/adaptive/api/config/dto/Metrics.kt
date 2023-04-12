@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Metrics {
-    private var measurements: List<Measurement> = ArrayList()
+    var measurements: List<Measurement> = mutableListOf()
 
     fun avgResponseTime(): Double {
         val totalTime = measurements.stream()
-                .filter { it.statistic == "TOTAL_TIME" }
-                .findFirst()
-                .get().value * 1000
+            .filter { it.statistic == "TOTAL_TIME" }
+            .findFirst()
+            .get().value * 1000
 
         val count = measurements.stream()
-                .filter { it.statistic == "COUNT" }
-                .findFirst()
-                .get().value
+            .filter { it.statistic == "COUNT" }
+            .findFirst()
+            .get().value
 
         return totalTime / count
     }
@@ -28,8 +28,8 @@ class Measurement {
 }
 
 data class MonitoredData(
-        val gcExecutions: Long,
-        val cpuUsage: Double,
-        val memoryUsage: Double,
-        val responseTime: Double,
+    val gcExecutions: Long,
+    val cpuUsage: Double,
+    val memoryUsage: Double,
+    val responseTime: Double,
 )

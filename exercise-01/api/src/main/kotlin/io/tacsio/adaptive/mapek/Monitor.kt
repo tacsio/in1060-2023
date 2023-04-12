@@ -21,16 +21,17 @@ class Monitor(
 
     private val log = LoggerFactory.getLogger(Monitor::class.java)
     private val mapper = ObjectMapper()
-    private val monitoringFrequency = 3000L
+    private val monitoringFrequency = 5000L
 
     suspend fun start() {
 
         while (true) {
-            log.debug("Running monitor")
-
             delay(monitoringFrequency)
 
             val monitoredData = retrieveData()
+            log.debug("Monitored: {}", monitoredData)
+
+            knowledge.verifyMonitoringChanges(monitoredData)
             analyzerInChannel.send(monitoredData)
         }
     }

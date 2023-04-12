@@ -15,10 +15,8 @@ class Executor(private val knowledge: Knowledge) {
 
     suspend fun start() {
         while (true) {
-            log.debug("Running executor")
-
             val adaptationActions = executorInChannel.receive()
-            knowledge.latestAdaptationActions = adaptationActions
+            knowledge.analyzeAdaptationFrequency(adaptationActions)
 
             adaptationActions.stream().forEach(::executeAdaptation)
         }
@@ -38,6 +36,7 @@ class Executor(private val knowledge: Knowledge) {
         val httpClient = HttpClient.newHttpClient()
         val httpRequest =
             HttpRequest.newBuilder(URI.create("http://localhost:8080/effectors/suggestion/off"))
+                .POST(HttpRequest.BodyPublishers.noBody())
                 .build()
 
         httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
@@ -47,6 +46,7 @@ class Executor(private val knowledge: Knowledge) {
         val httpClient = HttpClient.newHttpClient()
         val httpRequest =
             HttpRequest.newBuilder(URI.create("http://localhost:8080/effectors/suggestion/on"))
+                .POST(HttpRequest.BodyPublishers.noBody())
                 .build()
 
         httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
