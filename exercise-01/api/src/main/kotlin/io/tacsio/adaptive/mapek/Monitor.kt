@@ -15,8 +15,8 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 class Monitor(
-        private val knowledge: Knowledge,
-        private val analyzerInChannel: Channel<MonitoredData>,
+    private val knowledge: Knowledge,
+    private val analyzerInChannel: Channel<MonitoredData>,
 ) {
 
     private val log = LoggerFactory.getLogger(Monitor::class.java)
@@ -43,7 +43,8 @@ class Monitor(
 
         val gcExecutions = gcMXBeans.stream().map { it.collectionCount }.toList().sum()
         val cpuUsage = hulkOsMXBean.cpuLoad * 100
-        val memoryUsage = (memoryMXBean.heapMemoryUsage.used.toDouble() / memoryMXBean.heapMemoryUsage.max.toDouble()) * 100
+        val memoryUsage =
+            (memoryMXBean.heapMemoryUsage.used.toDouble() / memoryMXBean.heapMemoryUsage.max.toDouble()) * 100
         val responseTime = retrieveMetrics()
 
         return MonitoredData(gcExecutions, cpuUsage, memoryUsage, responseTime)
@@ -51,7 +52,8 @@ class Monitor(
 
     private fun retrieveMetrics(): Double {
         val httpClient = HttpClient.newHttpClient()
-        val httpRequest = HttpRequest.newBuilder(URI.create("http://localhost:8080/actuator/metrics/http.server.requests?tag=uri:/suggestion/%7BstudentId%7D"))
+        val httpRequest =
+            HttpRequest.newBuilder(URI.create("http://localhost:8080/actuator/metrics/http.server.requests?tag=uri:/suggestion/%7BstudentId%7D"))
                 .build()
 
         val httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())

@@ -30,7 +30,8 @@ class ApiSensor {
 
         val gcExecutions = gcMXBeans.stream().map { it.collectionCount }.toList().sum()
         val cpuUsage = hulkOsMXBean.cpuLoad * 100
-        val memoryUsage = (memoryMXBean.heapMemoryUsage.used.toDouble() / memoryMXBean.heapMemoryUsage.max.toDouble()) * 100
+        val memoryUsage =
+            (memoryMXBean.heapMemoryUsage.used.toDouble() / memoryMXBean.heapMemoryUsage.max.toDouble()) * 100
         val responseTime = retrieveMetrics()
 
         return MonitoredData(gcExecutions, cpuUsage, memoryUsage, responseTime)
@@ -50,21 +51,21 @@ class ApiSensor {
         response["cpu"] = hulkOsMXBean.cpuLoad * 100
 
         response["gc"] = mapOf(
-                Pair("type", gcMXBeans.stream().map { it.name }),
-                Pair("executions", gcMXBeans.stream().map { it.collectionCount }.toList().sum())
+            Pair("type", gcMXBeans.stream().map { it.name }),
+            Pair("executions", gcMXBeans.stream().map { it.collectionCount }.toList().sum())
         )
 
         response["memory"] = mapOf(
-                Pair("OsFreeMemory", bytesToMBString(hulkOsMXBean.freeMemorySize)),
-                Pair("OsTotalMemory", bytesToMBString(hulkOsMXBean.totalMemorySize)),
-                Pair(
-                        "JvmHeap", mapOf(
-                        Pair("init", bytesToMBString(memoryMXBean.heapMemoryUsage.init)),
-                        Pair("used", bytesToMBString(memoryMXBean.heapMemoryUsage.used)),
-                        Pair("committed", bytesToMBString(memoryMXBean.heapMemoryUsage.committed)),
-                        Pair("max", bytesToMBString(memoryMXBean.heapMemoryUsage.max)),
+            Pair("OsFreeMemory", bytesToMBString(hulkOsMXBean.freeMemorySize)),
+            Pair("OsTotalMemory", bytesToMBString(hulkOsMXBean.totalMemorySize)),
+            Pair(
+                "JvmHeap", mapOf(
+                    Pair("init", bytesToMBString(memoryMXBean.heapMemoryUsage.init)),
+                    Pair("used", bytesToMBString(memoryMXBean.heapMemoryUsage.used)),
+                    Pair("committed", bytesToMBString(memoryMXBean.heapMemoryUsage.committed)),
+                    Pair("max", bytesToMBString(memoryMXBean.heapMemoryUsage.max)),
                 )
-                )
+            )
         )
 
         return response
@@ -76,7 +77,8 @@ class ApiSensor {
 
     private fun retrieveMetrics(): Double {
         val httpClient = HttpClient.newHttpClient()
-        val httpRequest = HttpRequest.newBuilder(URI.create("http://localhost:8080/actuator/metrics/http.server.requests?tag=uri:/suggestion/%7BstudentId%7D"))
+        val httpRequest =
+            HttpRequest.newBuilder(URI.create("http://localhost:8080/actuator/metrics/http.server.requests?tag=uri:/suggestion/%7BstudentId%7D"))
                 .build()
 
         val httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
@@ -87,6 +89,7 @@ class ApiSensor {
                 val metrics = mapper.readValue(json, Metrics::class.java)
                 return metrics.avgResponseTime()
             }
+
             else -> 0.0
         }
 
