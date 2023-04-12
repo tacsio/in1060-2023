@@ -1,24 +1,25 @@
 package io.tacsio.adaptive.mapek
 
+import io.tacsio.adaptive.mapek.model.MonitoredData
 import kotlinx.coroutines.channels.Channel
 import org.slf4j.LoggerFactory
 
-class Analyzer(private val knowledge: Knowledge,
-               private val plannerInChannel: Channel<Int>) {
+class Analyzer(
+        private val knowledge: Knowledge,
+        private val plannerInChannel: Channel<Int>,
+) {
 
     private val log = LoggerFactory.getLogger(Analyzer::class.java)
-    val analyzerInChannel = Channel<Int>()
+    val analyzerInChannel = Channel<MonitoredData>()
 
     suspend fun start() {
         while (true) {
-            log.info("analyzing")
-            val fromChannel = analyzerInChannel.receive()
+            log.debug("Running analyzer.")
 
-            log.info(knowledge.data)
-            knowledge.data = "change in analyzer"
+            val monitoredData = analyzerInChannel.receive()
+            log.info("monitored data {}", monitoredData)
 
-            log.info("from monitor $fromChannel")
-            plannerInChannel.send(fromChannel * 2)
+            plannerInChannel.send(2)
         }
 
     }

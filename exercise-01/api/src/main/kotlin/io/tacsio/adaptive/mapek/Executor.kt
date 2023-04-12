@@ -10,7 +10,7 @@ class Executor(private val knowledge: Knowledge) {
 
     suspend fun start() {
         while (true) {
-            log.info("Executor")
+            log.debug("Running executor")
 
             log.info(knowledge.data)
             knowledge.data = "change in executor"

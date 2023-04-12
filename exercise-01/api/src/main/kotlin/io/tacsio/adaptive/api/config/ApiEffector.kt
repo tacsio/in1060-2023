@@ -10,13 +10,13 @@ class ApiEffector(private val featureFlag: FeatureFlag) {
 
     @PostMapping("/suggestion/on")
     fun switchOnAlgorithm(): String {
-        featureFlag.enableSuggestionAlgorithm(true)
+        featureFlag.enableSuggestionAlgorithm()
         return "Suggestion algorithm enabled"
     }
 
     @PostMapping("/suggestion/off")
     fun switchOffAlgorithm(): String {
-        featureFlag.enableSuggestionAlgorithm(false)
+        featureFlag.disableSuggestionAlgorithm()
         return "Suggestion algorithm disabled"
     }
 }

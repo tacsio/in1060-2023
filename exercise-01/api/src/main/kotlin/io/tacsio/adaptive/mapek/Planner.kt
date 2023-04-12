@@ -11,7 +11,8 @@ class Planner(private val knowledge: Knowledge,
 
     suspend fun start() {
         while (true) {
-            log.info("planning")
+            log.debug("Running planner")
+
             val fromChannel = plannerInChannel.receive()
 
             log.info(knowledge.data)

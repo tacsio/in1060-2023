@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean
 class ApiApplication {
 
     @Bean
-    fun startManagement(@Value("\${mapek.enabled:false}") enabled: Boolean) = CommandLineRunner {
+    fun startManagement(@Value("\${api.mapek.enabled}") enabled: Boolean) = CommandLineRunner {
         val knowledge = Knowledge()
         val executor = Executor(knowledge)
         val planner = Planner(knowledge, executor.executorInChannel)
