@@ -18,11 +18,12 @@ class Analyzer(
             val monitoredData = analyzerInChannel.receive()
 
             val symptoms = analyzeMonitoredData(monitoredData)
+            knowledge.analyzeSymptomsFrequency(symptoms)
+
             log.debug("Symptoms: {}", symptoms)
 
             plannerInChannel.send(symptoms)
         }
-
     }
 
     private fun analyzeMonitoredData(latestMonitoredData: MonitoredData): Set<ApplicationSymptom> {

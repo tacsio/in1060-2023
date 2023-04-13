@@ -17,7 +17,6 @@ class Planner(
     suspend fun start() {
         while (true) {
             val applicationSymptoms = plannerInChannel.receive()
-            knowledge.analyzeSymptomsFrequency(applicationSymptoms)
 
             val adaptationPlan = planAdaptation(applicationSymptoms)
             log.debug("Adaptation Plan: {}", adaptationPlan)

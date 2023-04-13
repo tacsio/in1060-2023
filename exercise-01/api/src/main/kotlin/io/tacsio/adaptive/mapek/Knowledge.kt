@@ -47,12 +47,12 @@ class Knowledge {
         val frequency = latestSymptoms.getOrDefault(symptom, 0)
         val monitoredAttributeChanged = monitoringChanges[symptom.monitoredAttribute] == true
 
-        val retryLimitReached = monitoredAttributeChanged && frequency >= retryLimit
-        val retryLimitMsg = if (retryLimitReached) "[Retry Limit Reached]" else ""
+        val thresholdReached = monitoredAttributeChanged && frequency >= retryLimit
+        val thresholdMsg = if (thresholdReached) "[Threshold Reached]" else ""
 
-        log.debug("Symptom frequency: [{}] => {} {}", symptom, frequency, retryLimitMsg)
+        log.debug("Symptom frequency: [{}] => {} {}", symptom, frequency, thresholdMsg)
 
-        return retryLimitReached
+        return thresholdReached
     }
 
     fun analyzeAdaptationFrequency(adaptationActions: Set<AdaptationAction>) {
