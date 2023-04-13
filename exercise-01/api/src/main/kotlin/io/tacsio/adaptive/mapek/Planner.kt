@@ -1,7 +1,7 @@
 package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.AdaptationAction
-import io.tacsio.adaptive.mapek.model.ApplicationSymptoms
+import io.tacsio.adaptive.mapek.model.ApplicationSymptom
 import kotlinx.coroutines.channels.Channel
 import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
@@ -12,12 +12,12 @@ class Planner(
 ) {
 
     private val log = LoggerFactory.getLogger(Planner::class.java)
-    val plannerInChannel = Channel<Set<ApplicationSymptoms>>()
+    val plannerInChannel = Channel<Set<ApplicationSymptom>>()
 
     suspend fun start() {
         while (true) {
             val applicationSymptoms = plannerInChannel.receive()
-            knowledge.analyzeSymptonsFrequency(applicationSymptoms)
+            knowledge.analyzeSymptomsFrequency(applicationSymptoms)
 
             val adaptationPlan = planAdaptation(applicationSymptoms)
             log.debug("Adaptation Plan: {}", adaptationPlan)
@@ -26,22 +26,11 @@ class Planner(
         }
     }
 
-    private fun planAdaptation(symptoms: Set<ApplicationSymptoms>): Set<AdaptationAction> {
+    private fun planAdaptation(symptoms: Set<ApplicationSymptom>): Set<AdaptationAction> {
         return symptoms.stream()
-            .filter { knowledge.canAdapt(it) }
-            .map(::adaptationAction)
+            .filter(knowledge::canPlanAdaptation)
+            .map(ApplicationSymptom::adaptationAction)
+            .filter(knowledge::canAdapt)
             .collect(Collectors.toSet())
-    }
-
-    private fun adaptationAction(it: ApplicationSymptoms?) = when (it) {
-        ApplicationSymptoms.HIGH_RESPONSE_TIME -> {
-            AdaptationAction.DISABLE_SUGGESTION_FEATURE
-        }
-
-        ApplicationSymptoms.LOW_RESPONSE_TIME -> {
-            AdaptationAction.ENABLE_SUGGESTION_FEATURE
-        }
-
-        else -> AdaptationAction.NONE
     }
 }

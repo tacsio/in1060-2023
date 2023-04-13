@@ -1,6 +1,9 @@
 package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.AdaptationAction
+import io.tacsio.adaptive.mapek.model.AdaptationAction.DISABLE_SUGGESTION_FEATURE
+import io.tacsio.adaptive.mapek.model.AdaptationAction.ENABLE_SUGGESTION_FEATURE
+import io.tacsio.adaptive.mapek.model.ApplicationSymptom
 import kotlinx.coroutines.channels.Channel
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -18,21 +21,26 @@ class Executor(private val knowledge: Knowledge) {
             val adaptationActions = executorInChannel.receive()
             knowledge.analyzeAdaptationFrequency(adaptationActions)
 
-            adaptationActions.stream().forEach(::executeAdaptation)
+            adaptationActions.stream()
+                .forEach(::executeAdaptation)
         }
     }
 
     private fun executeAdaptation(adaptationAction: AdaptationAction) {
-        log.debug("Executing {}", adaptationAction)
+        log.error("Executing {}", adaptationAction)
+
+        ApplicationSymptom.values()
+            .filter { it.adaptationAction == adaptationAction }
+            .forEach(knowledge::resetSymptomFrequency)
 
         when (adaptationAction) {
-            AdaptationAction.DISABLE_SUGGESTION_FEATURE -> disableSuggestionFeature()
-            AdaptationAction.ENABLE_SUGGESTION_FEATURE -> enableSuggestionFeature()
-            else -> {}
+            DISABLE_SUGGESTION_FEATURE -> disableSuggestionFeature()
+            ENABLE_SUGGESTION_FEATURE -> enableSuggestionFeature()
         }
     }
 
     private fun disableSuggestionFeature() {
+
         val httpClient = HttpClient.newHttpClient()
         val httpRequest =
             HttpRequest.newBuilder(URI.create("http://localhost:8080/effectors/suggestion/off"))
@@ -43,6 +51,7 @@ class Executor(private val knowledge: Knowledge) {
     }
 
     private fun enableSuggestionFeature() {
+
         val httpClient = HttpClient.newHttpClient()
         val httpRequest =
             HttpRequest.newBuilder(URI.create("http://localhost:8080/effectors/suggestion/on"))
