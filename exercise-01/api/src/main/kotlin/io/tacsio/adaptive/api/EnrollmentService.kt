@@ -46,7 +46,7 @@ class EnrollmentService(
     }
 
     private fun expenseAlgorithm(student: Student): List<Subject> {
-        val minLimit = 30L
+        val minLimit = 100L
         val maxLimit = student.name.length * 50L
         val random = (minLimit..maxLimit).random()
 

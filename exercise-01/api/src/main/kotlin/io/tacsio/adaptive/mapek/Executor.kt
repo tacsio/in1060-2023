@@ -29,8 +29,13 @@ class Executor(private val knowledge: Knowledge) {
     private fun executeAdaptation(adaptationAction: AdaptationAction) {
         log.error("Executing {}", adaptationAction)
 
+        //reset frequency threshold for all monitored attributes related to symptom
+        //prevent 'ping-pong' adaptations
+        val oppositeAction = AdaptationAction.valueOf(adaptationAction.oppositeAction)
+        val resetActionsSet = setOf(adaptationAction, oppositeAction)
+
         ApplicationSymptom.values()
-            .filter { it.adaptationAction == adaptationAction }
+            .filter { resetActionsSet.contains(it.adaptationAction) }
             .forEach(knowledge::resetSymptomFrequency)
 
         when (adaptationAction) {

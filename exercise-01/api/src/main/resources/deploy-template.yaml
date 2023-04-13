@@ -20,6 +20,8 @@ spec:
           env:
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:MaxRAMPercentage=75"
+            - name: logging.level.io.tacsio
+              value: debug
           resources:
             limits:
               memory: "MAPEK_MEMORY"
