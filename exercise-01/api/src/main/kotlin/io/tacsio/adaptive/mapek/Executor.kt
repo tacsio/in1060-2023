@@ -1,8 +1,7 @@
 package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.AdaptationAction
-import io.tacsio.adaptive.mapek.model.AdaptationAction.DISABLE_SUGGESTION_FEATURE
-import io.tacsio.adaptive.mapek.model.AdaptationAction.ENABLE_SUGGESTION_FEATURE
+import io.tacsio.adaptive.mapek.model.AdaptationAction.*
 import io.tacsio.adaptive.mapek.model.ApplicationSymptom
 import kotlinx.coroutines.channels.Channel
 import org.slf4j.LoggerFactory
@@ -19,9 +18,9 @@ class Executor(private val knowledge: Knowledge) {
     suspend fun start() {
         while (true) {
             val adaptationActions = executorInChannel.receive()
-            knowledge.analyzeAdaptationFrequency(adaptationActions)
 
             adaptationActions.stream()
+                .map { knowledge.updateAdaptationState(it) }
                 .forEach(::executeAdaptation)
         }
     }
@@ -29,18 +28,11 @@ class Executor(private val knowledge: Knowledge) {
     private fun executeAdaptation(adaptationAction: AdaptationAction) {
         log.error("Executing {}", adaptationAction)
 
-        //reset frequency threshold for all monitored attributes related to symptom
-        //prevent 'ping-pong' adaptations
-        val oppositeAction = AdaptationAction.valueOf(adaptationAction.oppositeAction)
-        val resetActionsSet = setOf(adaptationAction, oppositeAction)
-
-        ApplicationSymptom.values()
-            .filter { resetActionsSet.contains(it.adaptationAction) }
-            .forEach(knowledge::resetSymptomFrequency)
-
         when (adaptationAction) {
             DISABLE_SUGGESTION_FEATURE -> disableSuggestionFeature()
             ENABLE_SUGGESTION_FEATURE -> enableSuggestionFeature()
+            INCREASE_REPLICAS -> increaseReplicas()
+            DECREASE_REPLICAS -> decreaseReplicas()
         }
     }
 
@@ -64,5 +56,13 @@ class Executor(private val knowledge: Knowledge) {
                 .build()
 
         httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
+    }
+
+    private fun increaseReplicas() {
+        log.error("increase replicas")
+    }
+
+    private fun decreaseReplicas() {
+        log.error("decrease replicas")
     }
 }

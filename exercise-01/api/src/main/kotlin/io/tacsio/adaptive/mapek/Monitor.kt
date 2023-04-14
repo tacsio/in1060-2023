@@ -48,12 +48,16 @@ class Monitor(
         val cpuUsage = hulkOsMXBean.cpuLoad * 100
         val memoryUsage =
             (memoryMXBean.heapMemoryUsage.used.toDouble() / memoryMXBean.heapMemoryUsage.max.toDouble()) * 100
-        val responseTime = retrieveMetrics()
 
-        return MonitoredData(gcExecutions, cpuUsage, memoryUsage, responseTime)
+        val metrics = retrieveMetrics()
+        val totalRequests = metrics.first
+        val responseTime = metrics.second
+        val throughput = metrics.third
+
+        return MonitoredData(cpuUsage, memoryUsage, totalRequests, responseTime, throughput)
     }
 
-    private fun retrieveMetrics(): Double {
+    private fun retrieveMetrics(): Triple<Double, Double, Double> {
         val httpClient = HttpClient.newHttpClient()
         val httpRequest =
             HttpRequest.newBuilder(URI.create("http://localhost:8080/actuator/metrics/http.server.requests?tag=uri:/suggestion/%7BstudentId%7D"))
@@ -61,16 +65,19 @@ class Monitor(
 
         val httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
-        val responseTime = when (httpResponse.statusCode()) {
+        val metrics = when (httpResponse.statusCode()) {
             HttpStatus.OK.value() -> {
                 val json = httpResponse.body()
-                val metrics = mapper.readValue(json, Metrics::class.java)
-                return metrics.avgResponseTime()
+                mapper.readValue(json, Metrics::class.java)
             }
 
-            else -> 0.0
+            else -> Metrics()
         }
 
-        return responseTime
+        val totalRequests = metrics.numberOfRequests()
+        val responseTime = metrics.avgResponseTime()
+        val throughput = knowledge.calculateThroughput(metrics.numberOfRequests())
+
+        return Triple(totalRequests, responseTime, throughput)
     }
 }

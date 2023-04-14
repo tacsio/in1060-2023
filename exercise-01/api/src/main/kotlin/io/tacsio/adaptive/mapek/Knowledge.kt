@@ -1,12 +1,15 @@
 package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.AdaptationAction
+import io.tacsio.adaptive.mapek.model.AdaptationAction.DECREASE_REPLICAS
 import io.tacsio.adaptive.mapek.model.AdaptationAction.ENABLE_SUGGESTION_FEATURE
 import io.tacsio.adaptive.mapek.model.ApplicationSymptom
 import io.tacsio.adaptive.mapek.model.MonitoredAttributes
 import io.tacsio.adaptive.mapek.model.MonitoredAttributes.*
 import io.tacsio.adaptive.mapek.model.MonitoredData
 import org.slf4j.LoggerFactory
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 class Knowledge {
 
@@ -14,9 +17,9 @@ class Knowledge {
 
     private val retryLimit = 3
 
-    var actualAdaptationState: MutableSet<AdaptationAction> = mutableSetOf(ENABLE_SUGGESTION_FEATURE)
+    var actualAdaptationState: MutableSet<AdaptationAction> = mutableSetOf(ENABLE_SUGGESTION_FEATURE, DECREASE_REPLICAS)
 
-    private var latestMonitoredData: MonitoredData = MonitoredData(0, 0.0, 0.0, 0.0)
+    private var latestMonitoredData: MonitoredData = MonitoredData(0.0, 0.0, 0.0, 0.0, 0.0)
 
     private var monitoringChanges: MutableMap<MonitoredAttributes, Boolean> = mutableMapOf()
 
@@ -25,10 +28,10 @@ class Knowledge {
     private var latestAdaptationActions: MutableMap<AdaptationAction, Long> = mutableMapOf()
 
     fun verifyMonitoringChanges(monitoredData: MonitoredData) {
-        monitoringChanges[GC_EXECUTIONS] = latestMonitoredData.gcExecutions != monitoredData.gcExecutions
         monitoringChanges[CPU_USAGE] = latestMonitoredData.cpuUsage != monitoredData.cpuUsage
         monitoringChanges[MEMORY_USAGE] = latestMonitoredData.memoryUsage != monitoredData.memoryUsage
         monitoringChanges[RESPONSE_TIME] = latestMonitoredData.responseTime != monitoredData.responseTime
+        monitoringChanges[THROUGHPUT] = latestMonitoredData.throughput != monitoredData.throughput
 
         latestMonitoredData = monitoredData
     }
@@ -48,34 +51,50 @@ class Knowledge {
         val monitoredAttributeChanged = monitoringChanges[symptom.monitoredAttribute] == true
 
         val thresholdReached = monitoredAttributeChanged && frequency >= retryLimit
-        val thresholdMsg = if (thresholdReached) "[Threshold Reached]" else ""
+        val canAdapt = canAdapt(symptom.adaptationAction) //only to show or not the msg
+        val thresholdMsg = if (thresholdReached && canAdapt) "[Threshold Reached]" else ""
 
         log.debug("Symptom frequency: [{}] => {} {}", symptom, frequency, thresholdMsg)
 
         return thresholdReached
     }
 
-    fun analyzeAdaptationFrequency(adaptationActions: Set<AdaptationAction>) {
-        adaptationActions.forEach {
-            val frequency = latestAdaptationActions.getOrDefault(it, 0)
-            latestAdaptationActions[it] = frequency + 1
-        }
-    }
-
-
     fun canAdapt(adaptationAction: AdaptationAction): Boolean {
-        val permit = actualAdaptationState.contains(adaptationAction).not()
-
-        if (permit) {
-            actualAdaptationState.add(adaptationAction)
-            actualAdaptationState.remove(AdaptationAction.valueOf(adaptationAction.oppositeAction))
-        }
-
-        return permit
+        return actualAdaptationState.contains(adaptationAction).not()
     }
 
-    fun resetSymptomFrequency(symptom: ApplicationSymptom) {
+    fun updateAdaptationState(adaptationAction: AdaptationAction): AdaptationAction {
+        actualAdaptationState.add(adaptationAction)
+        actualAdaptationState.remove(AdaptationAction.valueOf(adaptationAction.oppositeAction))
+
+        //adpatation frequency
+        val frequency = latestAdaptationActions.getOrDefault(adaptationAction, 0)
+        latestAdaptationActions[adaptationAction] = frequency + 1
+
+        //reset frequency threshold for all monitored attributes related to symptom
+        //prevent 'ping-pong' adaptations
+        val oppositeAction = AdaptationAction.valueOf(adaptationAction.oppositeAction)
+        val resetActionsSet = setOf(adaptationAction, oppositeAction)
+
+        ApplicationSymptom.values()
+            .filter { resetActionsSet.contains(it.adaptationAction) }
+            .forEach(this::resetSymptomFrequency)
+
+        return adaptationAction
+    }
+
+    private fun resetSymptomFrequency(symptom: ApplicationSymptom) {
         latestSymptoms[symptom] = 0
+    }
+
+    fun calculateThroughput(numberOfRequests: Double): Double {
+        val lastTime = latestMonitoredData.timestamp
+        val now = LocalTime.now()
+
+        val seconds = ChronoUnit.SECONDS.between(lastTime, now)
+        val requests = numberOfRequests - latestMonitoredData.totalRequests
+
+        return requests / seconds
     }
 }
 

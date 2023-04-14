@@ -32,9 +32,12 @@ class ApiSensor {
         val cpuUsage = hulkOsMXBean.cpuLoad * 100
         val memoryUsage =
             (memoryMXBean.heapMemoryUsage.used.toDouble() / memoryMXBean.heapMemoryUsage.max.toDouble()) * 100
-        val responseTime = retrieveMetrics()
 
-        return MonitoredData(gcExecutions, cpuUsage, memoryUsage, responseTime)
+        val metrics = retrieveMetrics()
+        val totalRequests = metrics.first
+        val responseTime = metrics.second
+
+        return MonitoredData(gcExecutions, cpuUsage, memoryUsage, totalRequests, responseTime)
     }
 
     @GetMapping("/jvm-full")
@@ -45,6 +48,13 @@ class ApiSensor {
         val gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans()
         val osMXBean = ManagementFactory.getOperatingSystemMXBean()
         val hulkOsMXBean = osMXBean as OperatingSystemMXBean
+
+        val metrics = retrieveMetrics()
+        val totalRequests = metrics.first
+        val responseTime = metrics.second
+
+        response["totalRequests"] = totalRequests
+        response["responseTime"] = responseTime
 
         response["availableProcessors"] = osMXBean.availableProcessors
 
@@ -75,7 +85,7 @@ class ApiSensor {
         return (bytes / 1024 / 1024).toString() + " MB"
     }
 
-    private fun retrieveMetrics(): Double {
+    private fun retrieveMetrics(): Pair<Double, Double> {
         val httpClient = HttpClient.newHttpClient()
         val httpRequest =
             HttpRequest.newBuilder(URI.create("http://localhost:8080/actuator/metrics/http.server.requests?tag=uri:/suggestion/%7BstudentId%7D"))
@@ -83,16 +93,18 @@ class ApiSensor {
 
         val httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
 
-        val responseTime = when (httpResponse.statusCode()) {
+        val metrics = when (httpResponse.statusCode()) {
             HttpStatus.OK.value() -> {
                 val json = httpResponse.body()
-                val metrics = mapper.readValue(json, Metrics::class.java)
-                return metrics.avgResponseTime()
+                mapper.readValue(json, Metrics::class.java)
             }
 
-            else -> 0.0
+            else -> Metrics()
         }
 
-        return responseTime
+        val totalRequests = metrics.numberOfRequests()
+        val responseTime = metrics.avgResponseTime()
+
+        return Pair(totalRequests, responseTime)
     }
 }
