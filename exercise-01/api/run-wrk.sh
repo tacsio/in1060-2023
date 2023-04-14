@@ -1,3 +1,3 @@
 #!/bin/bash
 
-wrk -t10 -c1000 -d30s http://localhost:8080/suggestion/9
+wrk -t4 -c400 -d15s http://localhost:8080/suggestion/1

@@ -36,8 +36,8 @@ class Analyzer(
         }
 
         when {
-            latestMonitoredData.throughput > 800 -> symptoms.add(HIGH_THROUGHPUT)
-            latestMonitoredData.throughput <= 100 -> symptoms.add(LOW_THROUGHPUT)
+            latestMonitoredData.throughput > 300 -> symptoms.add(HIGH_THROUGHPUT)
+            latestMonitoredData.throughput <= 50 -> symptoms.add(LOW_THROUGHPUT)
         }
 
         return symptoms

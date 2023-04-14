@@ -2,7 +2,7 @@ package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.AdaptationAction
 import io.tacsio.adaptive.mapek.model.AdaptationAction.*
-import io.tacsio.adaptive.mapek.model.ApplicationSymptom
+import io.tacsio.adaptive.mapek.util.Shell
 import kotlinx.coroutines.channels.Channel
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -59,10 +59,18 @@ class Executor(private val knowledge: Knowledge) {
     }
 
     private fun increaseReplicas() {
-        log.error("increase replicas")
+        try {
+            Shell.execProcess("/app/kubectl scale deployment mapek --replicas 3")
+        } catch (e: Exception) {
+            log.error("Error when increasing replicas: {}", e.message)
+        }
     }
 
     private fun decreaseReplicas() {
-        log.error("decrease replicas")
+        try {
+            Shell.execProcess("/app/kubectl scale deployment mapek --replicas 1")
+        } catch (e: Exception) {
+            log.error("Error when decreasing replicas: {}", e.message)
+        }
     }
 }

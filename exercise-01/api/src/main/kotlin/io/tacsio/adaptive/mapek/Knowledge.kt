@@ -7,6 +7,7 @@ import io.tacsio.adaptive.mapek.model.ApplicationSymptom
 import io.tacsio.adaptive.mapek.model.MonitoredAttributes
 import io.tacsio.adaptive.mapek.model.MonitoredAttributes.*
 import io.tacsio.adaptive.mapek.model.MonitoredData
+import io.tacsio.adaptive.mapek.util.Shell
 import org.slf4j.LoggerFactory
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
@@ -60,6 +61,10 @@ class Knowledge {
     }
 
     fun canAdapt(adaptationAction: AdaptationAction): Boolean {
+        if (adaptationAction == DECREASE_REPLICAS && Shell.numberOfReplicas() > 1) {
+            return true
+        }
+
         return actualAdaptationState.contains(adaptationAction).not()
     }
 
