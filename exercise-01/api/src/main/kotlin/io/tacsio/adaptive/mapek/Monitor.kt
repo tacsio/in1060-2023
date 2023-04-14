@@ -40,11 +40,9 @@ class Monitor(
 
     private fun retrieveData(): MonitoredData {
         val memoryMXBean = ManagementFactory.getMemoryMXBean()
-        val gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans()
         val osMXBean = ManagementFactory.getOperatingSystemMXBean()
         val hulkOsMXBean = osMXBean as OperatingSystemMXBean
 
-        val gcExecutions = gcMXBeans.stream().map { it.collectionCount }.toList().sum()
         val cpuUsage = hulkOsMXBean.cpuLoad * 100
         val memoryUsage =
             (memoryMXBean.heapMemoryUsage.used.toDouble() / memoryMXBean.heapMemoryUsage.max.toDouble()) * 100

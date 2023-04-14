@@ -26,7 +26,7 @@ class Executor(private val knowledge: Knowledge) {
     }
 
     private fun executeAdaptation(adaptationAction: AdaptationAction) {
-        log.error("Executing {}", adaptationAction)
+        log.debug("Executing {}", adaptationAction)
 
         when (adaptationAction) {
             DISABLE_SUGGESTION_FEATURE -> disableSuggestionFeature()

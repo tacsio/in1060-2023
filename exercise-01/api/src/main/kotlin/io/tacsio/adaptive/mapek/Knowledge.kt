@@ -16,7 +16,7 @@ class Knowledge {
 
     private val log = LoggerFactory.getLogger(Knowledge::class.java)
 
-    private val retryLimit = 3
+    private val threshold = 3
 
     var actualAdaptationState: MutableSet<AdaptationAction> = mutableSetOf(ENABLE_SUGGESTION_FEATURE, DECREASE_REPLICAS)
 
@@ -51,7 +51,7 @@ class Knowledge {
         val frequency = latestSymptoms.getOrDefault(symptom, 0)
         val monitoredAttributeChanged = monitoringChanges[symptom.monitoredAttribute] == true
 
-        val thresholdReached = monitoredAttributeChanged && frequency >= retryLimit
+        val thresholdReached = monitoredAttributeChanged && frequency >= threshold
         val canAdapt = canAdapt(symptom.adaptationAction) //only to show or not the msg
         val thresholdMsg = if (thresholdReached && canAdapt) "[Threshold Reached]" else ""
 
@@ -65,6 +65,7 @@ class Knowledge {
             return true
         }
 
+        //steady state
         return actualAdaptationState.contains(adaptationAction).not()
     }
 

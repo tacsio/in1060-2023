@@ -3,7 +3,8 @@
 ### Objetivo
 
 API REST que consulta disciplinas disponíveis para realização de matrículas para os discentes. Na consulta de
-disciplinas disponíveis considera-se que esta API pode enviar um campo extra com sugestões de matrículas enviadas por um processamento externo de um modelo de IA on-line (que aumentaria o tempo de resposta total da
+disciplinas disponíveis considera-se que esta API pode enviar um campo extra com sugestões de matrículas enviadas por um
+serviço externo de um modelo de IA "on-line" (que aumentaria o tempo de resposta total da
 requisição).
 
 Manter um throughput razoável no consumo de uma API REST é uma meta importante, visto que tanto o tempo de resposta
@@ -13,13 +14,11 @@ razoável quanto a possibilidade da sugestão otimizada são fatores interessant
 
 Existem várias formas de adaptar o sistema e sua infraestrutura para tal. Desta forma, temos as seguintes regras:
 
-- Quando a execução do Garbage Collector se tornar muito constante a infraestrutura onde a aplicação executa deverá mudar. Nesse
-  caso, específico do aumento de execução do GC ocorrerá um _scale-up_ da JVM.
 - Quando a média do tempo de resposta das requisições começar a apresentar um aumento acima do limite estabelecido, a
-  infraestrutura realizada uma _scale-out_ aumentando o número de instâncias da API até um número limite.
-- Se o número limite de instâncias for atingido e ainda assim a aplicação estiver respondendo além do limite definido,
-  está deve simplificar o seu algoritmo eliminando o passo extra de consulta ao modelo de IA por uma sugestão otimizada de
-  disciplinas.
+  aplicação deve simplificar o seu algoritmo eliminando o passo extra de consulta ao modelo de IA "Fake" por uma sugestão 
+  otimizada de disciplinas.
+- Quando o throughput (requests/s) da API aumentar além do limite estabelecido ocorrerá um _scale-out_ da aplicação no 
+  cluster o número de réplicas da API será aumentado.
 
 ### Info
 
@@ -29,16 +28,21 @@ Existem várias formas de adaptar o sistema e sua infraestrutura para tal. Desta
 
 ## Aplicação Adaptativa
 
-|     **Dimensão**     | **Resposta**                                                                                                                                                                                                                                                |
-|:--------------------:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Por que Adaptar?** | Manter um throughput razoável mesmo sob aumento do consumo em uma API REST.                                                                                                                                                                                 |
-| **Quando Adaptar?**  | 1. Quando o tempo de resposta ultrapassar o limite aceitável;<br>2. Quando o número de execuções do garbage collector aumentar além do “normal”;<br>3. Quando mesmo com várias instâncias em execução ao aplicação ainda apresentar alto tempo de resposta. |
-|  **Onde Adaptar?**   | 1. Infra-estrutura;<br>2. Na arquitetura da aplicação, desabilitando features não essenciais ao negócio.                                                                                                                                                    |
-|  **O que Adaptar?**  | 1. Recursos da JVM;<br>2. Número de instâncias da aplicação;<br>3. Features não essenciais que degradam o tempo de resposta.                                                                                                                                |
-|  **Como Adaptar?**   | Utilizando feedback-loop centralizado externo a lógica a aplicação já instrumentalizada para exportar as principais métricas relacionadas ao objetivo de negócio e requisitos não funcionais.                                                               |
+|     **Dimensão**     | **Resposta**                                                                                                                                                                                  |
+|:--------------------:|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Por que Adaptar?** | Manter um throughput razoável mesmo sob aumento do consumo em uma API REST.                                                                                                                   |
+| **Quando Adaptar?**  | 1. Quando o tempo de resposta ultrapassar o limite aceitável;<br>2. Quando o throughput ultrapassar um limite pré-determinado;                                                                |
+|  **Onde Adaptar?**   | 1. Infra-estrutura;<br>2. No comportamento da aplicação, desabilitando features do sistema.                                                                                                   |
+|  **O que Adaptar?**  | 1. Número de instâncias da aplicação;<br>2. Features não essenciais que geram impacto no tempo de resposta da aplicação.                                                                      |
+|  **Como Adaptar?**   | Utilizando feedback-loop centralizado externo a lógica a aplicação já instrumentalizada para exportar as principais métricas relacionadas ao objetivo de negócio e requisitos não funcionais. |
 
 ### Help
 
 ```bash 
 http://localhost:8080/actuator/metrics/http.server.requests?tag=uri:/
 ```
+
+### Diferenças Teóricas
+
+Analisador já envia mudanças para o planejador. Na implementação o analisar identifica os sintomas com base nos objectos (goals).
+O Planejador é que gera o plano, validando as ações conforme o estado atual do sistema. 

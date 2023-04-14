@@ -2,6 +2,7 @@ package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.ApplicationSymptom
 import io.tacsio.adaptive.mapek.model.ApplicationSymptom.*
+import io.tacsio.adaptive.mapek.model.Goal
 import io.tacsio.adaptive.mapek.model.MonitoredData
 import kotlinx.coroutines.channels.Channel
 import org.slf4j.LoggerFactory
@@ -31,13 +32,13 @@ class Analyzer(
         var symptoms = HashSet<ApplicationSymptom>()
 
         when {
-            latestMonitoredData.responseTime > 500 -> symptoms.add(HIGH_RESPONSE_TIME)
-            latestMonitoredData.responseTime <= 500 -> symptoms.add(LOW_RESPONSE_TIME)
+            latestMonitoredData.responseTime > Goal.MAX_RESPONSE_TIME.value -> symptoms.add(HIGH_RESPONSE_TIME)
+            latestMonitoredData.responseTime <= Goal.MAX_RESPONSE_TIME.value -> symptoms.add(LOW_RESPONSE_TIME)
         }
 
         when {
-            latestMonitoredData.throughput > 300 -> symptoms.add(HIGH_THROUGHPUT)
-            latestMonitoredData.throughput <= 50 -> symptoms.add(LOW_THROUGHPUT)
+            latestMonitoredData.throughput > Goal.HIGH_THROUGHPUT.value -> symptoms.add(HIGH_THROUGHPUT)
+            latestMonitoredData.throughput <= Goal.LOW_THROUGHPUT.value -> symptoms.add(LOW_THROUGHPUT)
         }
 
         return symptoms
