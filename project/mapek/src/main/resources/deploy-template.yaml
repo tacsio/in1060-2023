@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mapek
+spec:
+#  strategy:
+#    type: Recreate
+  selector:
+    matchLabels:
+      app: mapek
+  template:
+    metadata:
+      labels:
+        app: mapek
+    spec:
+      containers:
+        - name: mapek
+          image: mapek:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-XX:MaxRAMPercentage=75"
+            - name: logging.level.io.tacsio
+              value: debug
+          resources:
+            limits:
+              memory: "MAPEK_MEMORY"
+              cpu: "MAPEK_CPU"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mapek
+spec:
+  selector:
+    app: mapek
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30000
