@@ -1,13 +1,11 @@
 package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.AdaptationAction
-import io.tacsio.adaptive.mapek.model.AdaptationAction.DECREASE_REPLICAS
 import io.tacsio.adaptive.mapek.model.AdaptationAction.ENABLE_SUGGESTION_FEATURE
 import io.tacsio.adaptive.mapek.model.ApplicationSymptom
 import io.tacsio.adaptive.mapek.model.MonitoredAttributes
 import io.tacsio.adaptive.mapek.model.MonitoredAttributes.*
 import io.tacsio.adaptive.mapek.model.MonitoredData
-import io.tacsio.adaptive.mapek.util.Shell
 import org.slf4j.LoggerFactory
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
@@ -18,7 +16,7 @@ class Knowledge {
 
     private val threshold = 3
 
-    var actualAdaptationState: MutableSet<AdaptationAction> = mutableSetOf(ENABLE_SUGGESTION_FEATURE, DECREASE_REPLICAS)
+    var actualAdaptationState: MutableSet<AdaptationAction> = mutableSetOf(ENABLE_SUGGESTION_FEATURE)
 
     private var latestMonitoredData: MonitoredData = MonitoredData(0.0, 0.0, 0.0, 0.0, 0.0)
 
@@ -61,10 +59,6 @@ class Knowledge {
     }
 
     fun canAdapt(adaptationAction: AdaptationAction): Boolean {
-        if (adaptationAction == DECREASE_REPLICAS && Shell.numberOfReplicas() > 1) {
-            return true
-        }
-
         //steady state
         return actualAdaptationState.contains(adaptationAction).not()
     }
@@ -94,7 +88,7 @@ class Knowledge {
     }
 
     fun calculateThroughput(numberOfRequests: Double): Double {
-        val lastTime = latestMonitoredData.timestamp
+        val lastTime = latestMonitoredData.timestamp.toLocalTime()
         val now = LocalTime.now()
 
         val seconds = ChronoUnit.SECONDS.between(lastTime, now)

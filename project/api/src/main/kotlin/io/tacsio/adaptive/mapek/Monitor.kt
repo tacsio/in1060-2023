@@ -3,6 +3,7 @@ package io.tacsio.adaptive.mapek
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.sun.management.OperatingSystemMXBean
 import io.tacsio.adaptive.api.config.dto.Metrics
+import io.tacsio.adaptive.mapek.adapter.MetricPublisher
 import io.tacsio.adaptive.mapek.model.MonitoredData
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -17,6 +18,7 @@ import java.net.http.HttpResponse
 class Monitor(
     private val knowledge: Knowledge,
     private val analyzerInChannel: Channel<MonitoredData>,
+    private val metricPublisher: MetricPublisher
 ) {
 
     private val log = LoggerFactory.getLogger(Monitor::class.java)
@@ -32,6 +34,12 @@ class Monitor(
             println("")
             log.debug("Monitored: {}", monitoredData)
             log.debug("Actual State: {}", knowledge.actualAdaptationState)
+
+            try {
+                metricPublisher.publish(monitoredData)
+            } catch (error: Exception) {
+                log.error("Could not publish metrics: {}", error)
+            }
 
             knowledge.verifyMonitoringChanges(monitoredData)
             analyzerInChannel.send(monitoredData)

@@ -1,8 +1,8 @@
 package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.AdaptationAction
-import io.tacsio.adaptive.mapek.model.AdaptationAction.*
-import io.tacsio.adaptive.mapek.util.Shell
+import io.tacsio.adaptive.mapek.model.AdaptationAction.DISABLE_SUGGESTION_FEATURE
+import io.tacsio.adaptive.mapek.model.AdaptationAction.ENABLE_SUGGESTION_FEATURE
 import kotlinx.coroutines.channels.Channel
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -31,8 +31,6 @@ class Executor(private val knowledge: Knowledge) {
         when (adaptationAction) {
             DISABLE_SUGGESTION_FEATURE -> disableSuggestionFeature()
             ENABLE_SUGGESTION_FEATURE -> enableSuggestionFeature()
-            INCREASE_REPLICAS -> increaseReplicas()
-            DECREASE_REPLICAS -> decreaseReplicas()
         }
     }
 
@@ -56,21 +54,5 @@ class Executor(private val knowledge: Knowledge) {
                 .build()
 
         httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString())
-    }
-
-    private fun increaseReplicas() {
-        try {
-            Shell.execProcess("/app/kubectl scale deployment api --replicas 3")
-        } catch (e: Exception) {
-            log.error("Error when increasing replicas: {}", e.message)
-        }
-    }
-
-    private fun decreaseReplicas() {
-        try {
-            Shell.execProcess("/app/kubectl scale deployment api --replicas 1")
-        } catch (e: Exception) {
-            log.error("Error when decreasing replicas: {}", e.message)
-        }
     }
 }

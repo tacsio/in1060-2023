@@ -1,6 +1,7 @@
 package io.tacsio.adaptive
 
 import io.tacsio.adaptive.mapek.*
+import io.tacsio.adaptive.mapek.adapter.MetricPublisher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
@@ -16,12 +17,13 @@ class ApiApplication {
     private val log = LoggerFactory.getLogger(ApiApplication::class.java)
 
     @Bean
-    fun startManagement(@Value("\${api.mapek.enabled}") enabled: Boolean) = CommandLineRunner {
+    fun startManagement(@Value("\${api.mapek.enabled}") enabled: Boolean,
+                        metricPublisher: MetricPublisher) = CommandLineRunner {
         val knowledge = Knowledge()
         val executor = Executor(knowledge)
         val planner = Planner(knowledge, executor.executorInChannel)
         val analyzer = Analyzer(knowledge, planner.plannerInChannel)
-        val monitor = Monitor(knowledge, analyzer.analyzerInChannel)
+        val monitor = Monitor(knowledge, analyzer.analyzerInChannel, metricPublisher)
 
         if (enabled) {
             log.debug("Running monitor.")

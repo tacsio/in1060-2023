@@ -1,7 +1,8 @@
 package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.ApplicationSymptom
-import io.tacsio.adaptive.mapek.model.ApplicationSymptom.*
+import io.tacsio.adaptive.mapek.model.ApplicationSymptom.HIGH_RESPONSE_TIME
+import io.tacsio.adaptive.mapek.model.ApplicationSymptom.LOW_RESPONSE_TIME
 import io.tacsio.adaptive.mapek.model.Goal
 import io.tacsio.adaptive.mapek.model.MonitoredData
 import kotlinx.coroutines.channels.Channel
@@ -35,12 +36,6 @@ class Analyzer(
             latestMonitoredData.responseTime > Goal.MAX_RESPONSE_TIME.value -> symptoms.add(HIGH_RESPONSE_TIME)
             latestMonitoredData.responseTime <= Goal.MAX_RESPONSE_TIME.value -> symptoms.add(LOW_RESPONSE_TIME)
         }
-
-        when {
-            latestMonitoredData.throughput > Goal.HIGH_THROUGHPUT.value -> symptoms.add(HIGH_THROUGHPUT)
-            latestMonitoredData.throughput <= Goal.LOW_THROUGHPUT.value -> symptoms.add(LOW_THROUGHPUT)
-        }
-
         return symptoms
     }
 
