@@ -2,7 +2,6 @@ package io.tacsio.adaptive.mapek
 
 import io.tacsio.adaptive.mapek.model.AdaptationAction
 import io.tacsio.adaptive.mapek.model.AdaptationAction.DECREASE_REPLICAS
-import io.tacsio.adaptive.mapek.model.AdaptationAction.ENABLE_SUGGESTION_FEATURE
 import io.tacsio.adaptive.mapek.model.ApplicationSymptom
 import io.tacsio.adaptive.mapek.model.MonitoredAttributes
 import io.tacsio.adaptive.mapek.model.MonitoredAttributes.*
@@ -18,9 +17,9 @@ class Knowledge {
 
     private val threshold = 3
 
-    var actualAdaptationState: MutableSet<AdaptationAction> = mutableSetOf(ENABLE_SUGGESTION_FEATURE, DECREASE_REPLICAS)
+    var actualAdaptationState: MutableSet<AdaptationAction> = mutableSetOf(DECREASE_REPLICAS)
 
-    private var latestMonitoredData: MonitoredData = MonitoredData(0.0, 0.0, 0.0, 0.0, 0.0)
+    private var latestMonitoredData: MonitoredData = MonitoredData(0.0, 0.0)
 
     private var monitoringChanges: MutableMap<MonitoredAttributes, Boolean> = mutableMapOf()
 
@@ -29,8 +28,6 @@ class Knowledge {
     private var latestAdaptationActions: MutableMap<AdaptationAction, Long> = mutableMapOf()
 
     fun verifyMonitoringChanges(monitoredData: MonitoredData) {
-        monitoringChanges[CPU_USAGE] = latestMonitoredData.cpuUsage != monitoredData.cpuUsage
-        monitoringChanges[MEMORY_USAGE] = latestMonitoredData.memoryUsage != monitoredData.memoryUsage
         monitoringChanges[RESPONSE_TIME] = latestMonitoredData.responseTime != monitoredData.responseTime
         monitoringChanges[THROUGHPUT] = latestMonitoredData.throughput != monitoredData.throughput
 
@@ -91,16 +88,6 @@ class Knowledge {
 
     private fun resetSymptomFrequency(symptom: ApplicationSymptom) {
         latestSymptoms[symptom] = 0
-    }
-
-    fun calculateThroughput(numberOfRequests: Double): Double {
-        val lastTime = latestMonitoredData.timestamp
-        val now = LocalTime.now()
-
-        val seconds = ChronoUnit.SECONDS.between(lastTime, now)
-        val requests = numberOfRequests - latestMonitoredData.totalRequests
-
-        return requests / seconds
     }
 }
 

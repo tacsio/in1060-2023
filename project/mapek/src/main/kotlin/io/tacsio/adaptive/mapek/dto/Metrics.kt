@@ -1,4 +1,4 @@
-package io.tacsio.adaptive.api.config.dto
+package io.tacsio.adaptive.mapek.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
