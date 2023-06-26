@@ -33,7 +33,7 @@ class Executor(private val knowledge: Knowledge) {
 
     private fun increaseReplicas() {
         try {
-            Shell.execProcess("/app/kubectl scale deployment mapek --replicas 3")
+            Shell.execProcess("/app/kubectl scale deployment api --replicas 3")
         } catch (e: Exception) {
             log.error("Error when increasing replicas: {}", e.message)
         }
@@ -41,7 +41,7 @@ class Executor(private val knowledge: Knowledge) {
 
     private fun decreaseReplicas() {
         try {
-            Shell.execProcess("/app/kubectl scale deployment mapek --replicas 1")
+            Shell.execProcess("/app/kubectl scale deployment api --replicas 1")
         } catch (e: Exception) {
             log.error("Error when decreasing replicas: {}", e.message)
         }

@@ -14,7 +14,7 @@ class Shell {
         }
 
         fun numberOfReplicas(): Int {
-            val command = "/app/kubectl get deployments.apps mapek -ojsonpath='{.status.availableReplicas}'"
+            val command = "/app/kubectl get deployments.apps api -ojsonpath='{.status.availableReplicas}'"
             val result = execProcess(command)
 
             return result.first.replace("'", "").toInt()
