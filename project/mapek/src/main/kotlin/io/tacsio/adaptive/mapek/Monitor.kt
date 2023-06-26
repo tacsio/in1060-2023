@@ -21,6 +21,7 @@ class Monitor(
             delay(monitoringFrequency)
 
             val monitoredData = retrieveData()
+            log.debug("")
             log.debug("Monitored: {}", monitoredData)
             log.debug("Actual State: {}", knowledge.actualAdaptationState)
 

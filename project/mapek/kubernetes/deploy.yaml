@@ -20,6 +20,8 @@ spec:
           env:
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:MaxRAMPercentage=75"
+            - name: spring.datasource.url
+              value: jdbc:postgresql://postgres.database.svc.cluster.local:5432/postgres
             - name: logging.level.io.tacsio
               value: debug
           resources:
