@@ -26,7 +26,7 @@ spec:
               value: debug
           resources:
             limits:
-              memory: "256Mi"
+              memory: "1Gi"
               cpu: "1"
           ports:
             - containerPort: 8080

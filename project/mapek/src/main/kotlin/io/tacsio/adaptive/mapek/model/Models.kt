@@ -12,7 +12,7 @@ data class MonitoredData(val responseTime: Double, val throughput: Double) {
 
 enum class Goal(val value: Double) {
     LOW_THROUGHPUT(50.0),
-    HIGH_THROUGHPUT(300.0)
+    HIGH_THROUGHPUT(200.0)
 }
 
 enum class MonitoredAttributes {
