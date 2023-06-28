@@ -1,4 +1,4 @@
-## API
+## Projeto
 
 ### Objetivo
 
@@ -17,6 +17,8 @@ Existem várias formas de adaptar o sistema e sua infraestrutura para tal. Desta
 - Quando a média do tempo de resposta das requisições começar a apresentar um aumento acima do limite estabelecido, a
   aplicação deve simplificar o seu algoritmo eliminando o passo extra de consulta ao modelo de IA "Fake" por uma sugestão 
   otimizada de disciplinas.
+- Quando o throughput (requests/s) da API aumentar além do limite estabelecido ocorrerá um _scale-out_ da aplicação no 
+  cluster o número de réplicas da API será aumentado.
 
 ### Info
 
@@ -29,10 +31,14 @@ Existem várias formas de adaptar o sistema e sua infraestrutura para tal. Desta
 |     **Dimensão**     | **Resposta**                                                                                                                                                                                  |
 |:--------------------:|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Por que Adaptar?** | Manter um throughput razoável mesmo sob aumento do consumo em uma API REST.                                                                                                                   |
-| **Quando Adaptar?**  | 1. Quando o tempo de resposta ultrapassar o limite aceitável; pré-determinado;                                                                |
-|  **Onde Adaptar?**   | 1. No comportamento da aplicação, desabilitando features do sistema.                                                                                                   |
-|  **O que Adaptar?**  | 1. Features não essenciais que geram impacto no tempo de resposta da aplicação.                                                                      |
+| **Quando Adaptar?**  | 1. Quando o tempo de resposta ultrapassar o limite aceitável;<br>2. Quando o throughput ultrapassar um limite pré-determinado;                                                                |
+|  **Onde Adaptar?**   | 1. Infra-estrutura;<br>2. No comportamento da aplicação, desabilitando features do sistema.                                                                                                   |
+|  **O que Adaptar?**  | 1. Número de instâncias da aplicação;<br>2. Features não essenciais que geram impacto no tempo de resposta da aplicação.                                                                      |
 |  **Como Adaptar?**   | Utilizando feedback-loop centralizado externo a lógica a aplicação já instrumentalizada para exportar as principais métricas relacionadas ao objetivo de negócio e requisitos não funcionais. |
+
+## MAPEK Master-Slave
+
+Nessa implementação, existe um MAPEK externo centralizado que realiza adpatação de instâncias da aplicação coletando métricas de performance das N instâncias atuais do sistema e calculando o throughput médio do serviço como um todo, gerando assim insumos para realização da adaptação do número de instâncias.
 
 ### Help
 
